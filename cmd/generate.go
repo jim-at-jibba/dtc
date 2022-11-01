@@ -10,6 +10,7 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/google/uuid"
+	"github.com/jim-at-jibba/devtools/tui"
 	"github.com/spf13/cobra"
 )
 
@@ -25,10 +26,6 @@ var styleLabel = lipgloss.NewStyle().
 	PaddingLeft(1)
 
 var subtle = lipgloss.AdaptiveColor{Light: "#D9DCCF", Dark: "#383838"}
-var docStyle = lipgloss.NewStyle().
-	Padding(1, 2, 1, 2).
-	Border(lipgloss.NormalBorder(), true).
-	BorderForeground(lipgloss.Color("#7D56F4"))
 
 // generateCmd represents the generate command
 var generateCmd = &cobra.Command{
@@ -68,7 +65,7 @@ var generateCmd = &cobra.Command{
 			doc.WriteString(desc)
 		}
 
-		fmt.Println(docStyle.Render(doc.String()))
+		fmt.Println(tui.DocStyle.Render(doc.String()))
 	},
 }
 
