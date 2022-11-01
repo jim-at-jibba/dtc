@@ -36,16 +36,38 @@ var generateCmd = &cobra.Command{
 	Short: "Generate UUID v4",
 	Long:  "Generate UUID v4",
 	Run: func(cmd *cobra.Command, args []string) {
+		count, _ := cmd.Flags().GetString("count")
 		doc := strings.Builder{}
-		id := uuid.New()
-		desc := lipgloss.JoinVertical(lipgloss.Left,
-			styleLabel.Render("UUID String: "),
-			styleValue.Render(id.String()),
-			styleLabel.Render("UUID Clock ID: "),
-			styleValue.Render(strconv.Itoa(id.ClockSequence())),
-		)
 
-		doc.WriteString(desc)
+		if count != "" {
+			desc := lipgloss.JoinVertical(lipgloss.Left,
+				styleLabel.Render("UUIDs: "),
+			)
+
+			int, err := strconv.Atoi(count)
+			if err != nil {
+				fmt.Println("err")
+			}
+
+			ids := ""
+			for i := 0; i < int; i++ {
+				id := uuid.New()
+				ids += styleValue.Render(id.String()) + "\n"
+
+			}
+
+			doc.WriteString(desc + "\n" + ids)
+		} else {
+			id := uuid.New()
+			desc := lipgloss.JoinVertical(lipgloss.Left,
+				styleLabel.Render("UUID: "),
+				styleValue.Render(id.String()),
+				styleLabel.Render("UUID Clock ID: "),
+				styleValue.Render(strconv.Itoa(id.ClockSequence())),
+			)
+			doc.WriteString(desc)
+		}
+
 		fmt.Println(docStyle.Render(doc.String()))
 	},
 }
@@ -53,11 +75,7 @@ var generateCmd = &cobra.Command{
 func init() {
 	uuidCmd.AddCommand(generateCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// generateCmd.PersistentFlags().String("foo", "", "A help for foo")
+	uuidCmd.PersistentFlags().String("count", "", "Number of UUIDs to generate")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
