@@ -106,7 +106,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case EncodeStr:
 		encoded := msg
 		m.encoded = encoded.encoded
-		return m, nil
+		return m, tea.Quit
 
 	// We handle errors just like any other message
 	case errMsg:
