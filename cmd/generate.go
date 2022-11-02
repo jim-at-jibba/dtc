@@ -14,8 +14,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var subtle = lipgloss.AdaptiveColor{Light: "#D9DCCF", Dark: "#383838"}
-
 // generateCmd represents the generate command
 var generateCmd = &cobra.Command{
 	Use:   "generate",
