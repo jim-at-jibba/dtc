@@ -21,7 +21,7 @@ var encodeCmd = &cobra.Command{
 	Short: "Encode base64 string",
 	Long:  "Encode base64 string",
 	Run: func(cmd *cobra.Command, args []string) {
-		p := tea.NewProgram(initialModel())
+		p := tea.NewProgram(initialEncodeModel())
 
 		if err := p.Start(); err != nil {
 			fmt.Println("WHat", err)
@@ -69,7 +69,7 @@ func (m encodeModel) encodeMsg() tea.Msg {
 	return encoded
 }
 
-func initialModel() encodeModel {
+func initialEncodeModel() encodeModel {
 	ti := textinput.New()
 	ti.Placeholder = "String to encode"
 	ti.Focus()
