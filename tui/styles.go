@@ -19,5 +19,6 @@ var ValueStyle = lipgloss.NewStyle().
 var LabelStyle = lipgloss.NewStyle().
 	Bold(true).
 	Foreground(lipgloss.Color("7")).
-	PaddingTop(1).
 	PaddingLeft(1)
+
+var Spacer = lipgloss.NewStyle().Height(1)

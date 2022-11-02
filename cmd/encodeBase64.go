@@ -115,9 +115,13 @@ func (m encodeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m encodeModel) View() string {
 	if len(m.encoded) > 0 {
-		return tui.ContainerStyle.Render(fmt.Sprintf(
-			m.encoded,
-		))
+		return tui.ContainerStyle.Render(
+			lipgloss.JoinVertical(lipgloss.Left,
+				tui.LabelStyle.Render("Encoded string:"),
+				tui.Spacer.Render(""),
+				tui.ValueStyle.Render(m.encoded),
+			),
+		)
 	} else {
 		return lipgloss.JoinVertical(lipgloss.Left,
 			tui.LabelStyle.Render("Enter the string you want to encode."),

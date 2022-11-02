@@ -111,9 +111,17 @@ func (m decodeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m decodeModel) View() string {
 	if len(m.decoded) > 0 {
-		return tui.ContainerStyle.Render(fmt.Sprintf(
-			m.decoded,
-		))
+		// return tui.ContainerStyle.Render(fmt.Sprintf(
+		// 	tui.ValueStyle.Render("Decoded string: \n\n\n"),
+		// 	m.decoded,
+		// ))
+		return tui.ContainerStyle.Render(
+			lipgloss.JoinVertical(lipgloss.Left,
+				tui.LabelStyle.Render("Decoded string:"),
+				tui.Spacer.Render(""),
+				tui.ValueStyle.Render(m.decoded),
+			),
+		)
 	} else {
 		return lipgloss.JoinVertical(lipgloss.Left,
 			tui.LabelStyle.Render("Enter the string you want to decode."),

@@ -46,6 +46,7 @@ var generateCmd = &cobra.Command{
 			desc := lipgloss.JoinVertical(lipgloss.Left,
 				tui.LabelStyle.Render("UUID: "),
 				tui.ValueStyle.Render(id.String()),
+				tui.Spacer.Render(""),
 				tui.LabelStyle.Render("UUID Clock ID: "),
 				tui.ValueStyle.Render(strconv.Itoa(id.ClockSequence())),
 			)
