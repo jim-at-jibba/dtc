@@ -125,10 +125,10 @@ func (m model) View() string {
 			m.encoded,
 		))
 	} else {
-		return fmt.Sprintf(
-			"Enter the string you want to encode.\n\n%s\n\n%s",
+		return lipgloss.JoinVertical(lipgloss.Left,
+			tui.LabelStyle.Render("Enter the string you want to encode."),
 			m.rawString.View(),
-			"(esc to quit)",
-		) + "\n"
+			tui.ValueStyle.Render("(esc to quit)"),
+		)
 	}
 }
