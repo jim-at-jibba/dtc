@@ -118,7 +118,7 @@ func (m decodeModel) View() string {
 		return lipgloss.JoinVertical(lipgloss.Left,
 			tui.LabelStyle.Render("Enter the string you want to decode."),
 			m.rawString.View(),
-			tui.ValueStyle.Render("(esc to quit)"),
+			tui.ValueStyle.Render("(q to quit)"),
 		)
 	}
 }
