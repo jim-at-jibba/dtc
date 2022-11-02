@@ -45,53 +45,47 @@ func init() {
 	// encodeBase64Cmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-var (
-	titleStyle        = lipgloss.NewStyle().MarginLeft(2)
-	itemStyle         = lipgloss.NewStyle().PaddingLeft(4)
-	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color("170"))
-)
-
 type (
 	errMsg error
 )
 
-type model struct {
+type encodeModel struct {
 	rawString textinput.Model
 	encoded   string
 	err       error
 }
 
-type EncodeStr struct {
+type encodeStr struct {
 	encoded string
 }
 
-func Encode(raw string) EncodeStr {
+func Encode(raw string) encodeStr {
 	sEnc := b64.StdEncoding.EncodeToString([]byte(raw))
-	return EncodeStr{encoded: sEnc}
+	return encodeStr{encoded: sEnc}
 }
 
-func (m model) encodeMsg() tea.Msg {
+func (m encodeModel) encodeMsg() tea.Msg {
 	encoded := Encode(m.rawString.Value())
 	return encoded
 }
 
-func initialModel() model {
+func initialModel() encodeModel {
 	ti := textinput.New()
 	ti.Placeholder = "String to encode"
 	ti.Focus()
 
-	return model{
+	return encodeModel{
 		rawString: ti,
 		encoded:   "",
 		err:       nil,
 	}
 }
 
-func (m model) Init() tea.Cmd {
+func (m encodeModel) Init() tea.Cmd {
 	return textinput.Blink
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m encodeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
@@ -103,7 +97,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, m.encodeMsg
 		}
 
-	case EncodeStr:
+	case encodeStr:
 		encoded := msg
 		m.encoded = encoded.encoded
 		return m, tea.Quit
@@ -119,7 +113,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m model) View() string {
+func (m encodeModel) View() string {
 	if len(m.encoded) > 0 {
 		return tui.ContainerStyle.Render(fmt.Sprintf(
 			m.encoded,
