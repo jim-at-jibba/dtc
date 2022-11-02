@@ -14,17 +14,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var styleValue = lipgloss.NewStyle().
-	Bold(true).
-	Foreground(lipgloss.Color("#7D56F4")).
-	PaddingLeft(1)
-
-var styleLabel = lipgloss.NewStyle().
-	Bold(true).
-	Foreground(lipgloss.Color("#FFF")).
-	PaddingTop(1).
-	PaddingLeft(1)
-
 var subtle = lipgloss.AdaptiveColor{Light: "#D9DCCF", Dark: "#383838"}
 
 // generateCmd represents the generate command
@@ -38,7 +27,7 @@ var generateCmd = &cobra.Command{
 
 		if count != "" {
 			desc := lipgloss.JoinVertical(lipgloss.Left,
-				styleLabel.Render("UUIDs: "),
+				tui.LabelStyle.Render("UUIDs: "),
 			)
 
 			int, err := strconv.Atoi(count)
@@ -49,7 +38,7 @@ var generateCmd = &cobra.Command{
 			ids := ""
 			for i := 0; i < int; i++ {
 				id := uuid.New()
-				ids += styleValue.Render(id.String()) + "\n"
+				ids += tui.ValueStyle.Render(id.String()) + "\n"
 
 			}
 
@@ -57,10 +46,10 @@ var generateCmd = &cobra.Command{
 		} else {
 			id := uuid.New()
 			desc := lipgloss.JoinVertical(lipgloss.Left,
-				styleLabel.Render("UUID: "),
-				styleValue.Render(id.String()),
-				styleLabel.Render("UUID Clock ID: "),
-				styleValue.Render(strconv.Itoa(id.ClockSequence())),
+				tui.LabelStyle.Render("UUID: "),
+				tui.ValueStyle.Render(id.String()),
+				tui.LabelStyle.Render("UUID Clock ID: "),
+				tui.ValueStyle.Render(strconv.Itoa(id.ClockSequence())),
 			)
 			doc.WriteString(desc)
 		}
