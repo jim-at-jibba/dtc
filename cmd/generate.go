@@ -65,7 +65,7 @@ var generateCmd = &cobra.Command{
 			doc.WriteString(desc)
 		}
 
-		fmt.Println(tui.DocStyle.Render(doc.String()))
+		fmt.Println(tui.ContainerStyle.Render(doc.String()))
 	},
 }
 

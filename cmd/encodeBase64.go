@@ -121,7 +121,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	if len(m.encoded) > 0 {
-		return tui.DocStyle.Render(fmt.Sprintf(
+		return tui.ContainerStyle.Render(fmt.Sprintf(
 			m.encoded,
 		))
 	} else {

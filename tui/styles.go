@@ -2,7 +2,7 @@ package tui
 
 import "github.com/charmbracelet/lipgloss"
 
-var DocStyle = lipgloss.NewStyle().
+var ContainerStyle = lipgloss.NewStyle().
 	Padding(1, 2, 1, 2).
 	Margin(2).
 	Border(lipgloss.NormalBorder(), true).
