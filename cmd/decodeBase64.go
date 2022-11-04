@@ -7,6 +7,7 @@ import (
 	b64 "encoding/base64"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -39,7 +40,7 @@ func init() {
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	decodeCmd.PersistentFlags().BoolP("url", "u", false, "URL-compatible base64 format")
+	decodeCmd.Flags().BoolP("url", "u", false, "URL-compatible base64 format")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
@@ -58,11 +59,13 @@ type decodeStr struct {
 }
 
 func Decode(raw string, url bool) decodeStr {
+
 	if url {
-		sDec, _ := b64.URLEncoding.DecodeString(raw)
+		sDec, _ := b64.URLEncoding.DecodeString(strings.TrimSpace(raw))
 		return decodeStr{decoded: string(sDec)}
 	} else {
-		sDec, _ := b64.StdEncoding.DecodeString(raw)
+		sDec, _ := b64.StdEncoding.DecodeString(strings.TrimSpace(raw))
+		fmt.Println("sDec", string(sDec))
 		return decodeStr{decoded: string(sDec)}
 	}
 }
@@ -127,8 +130,14 @@ func (m decodeModel) View() string {
 			),
 		)
 	} else {
+		var text string
+		if m.url {
+			text = "Enter the string you want to URL-compatible decode"
+		} else {
+			text = "Enter the string you want to deccode."
+		}
 		return lipgloss.JoinVertical(lipgloss.Left,
-			tui.LabelStyle.Render("Enter the string you want to decode."),
+			tui.LabelStyle.Render(text),
 			m.rawString.View(),
 			tui.ValueStyle.Render("(q to quit)"),
 		)
