@@ -21,7 +21,8 @@ var decodeCmd = &cobra.Command{
 	Short: "Decode base64 string",
 	Long:  "Decode base64 string",
 	Run: func(cmd *cobra.Command, args []string) {
-		p := tea.NewProgram(initialDecodeModel())
+		url, _ := cmd.Flags().GetBool("url")
+		p := tea.NewProgram(initialDecodeModel(url))
 
 		if err := p.Start(); err != nil {
 			fmt.Println("WHat", err)
@@ -38,7 +39,7 @@ func init() {
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// encodeBase64Cmd.PersistentFlags().String("foo", "", "A help for foo")
+	decodeCmd.PersistentFlags().BoolP("url", "u", false, "URL-compatible base64 format")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
@@ -49,23 +50,29 @@ type decodeModel struct {
 	rawString textinput.Model
 	decoded   string
 	err       error
+	url       bool
 }
 
 type decodeStr struct {
 	decoded string
 }
 
-func Decode(raw string) decodeStr {
-	sDec, _ := b64.StdEncoding.DecodeString(raw)
-	return decodeStr{decoded: string(sDec)}
+func Decode(raw string, url bool) decodeStr {
+	if url {
+		sDec, _ := b64.URLEncoding.DecodeString(raw)
+		return decodeStr{decoded: string(sDec)}
+	} else {
+		sDec, _ := b64.StdEncoding.DecodeString(raw)
+		return decodeStr{decoded: string(sDec)}
+	}
 }
 
 func (m decodeModel) decodeMsg() tea.Msg {
-	decoded := Decode(m.rawString.Value())
+	decoded := Decode(m.rawString.Value(), m.url)
 	return decoded
 }
 
-func initialDecodeModel() decodeModel {
+func initialDecodeModel(url bool) decodeModel {
 	ti := textinput.New()
 	ti.Placeholder = "String to decode"
 	ti.Focus()
@@ -74,6 +81,7 @@ func initialDecodeModel() decodeModel {
 		rawString: ti,
 		decoded:   "",
 		err:       nil,
+		url:       url,
 	}
 }
 
@@ -111,10 +119,6 @@ func (m decodeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m decodeModel) View() string {
 	if len(m.decoded) > 0 {
-		// return tui.ContainerStyle.Render(fmt.Sprintf(
-		// 	tui.ValueStyle.Render("Decoded string: \n\n\n"),
-		// 	m.decoded,
-		// ))
 		return tui.ContainerStyle.Render(
 			lipgloss.JoinVertical(lipgloss.Left,
 				tui.LabelStyle.Render("Decoded string:"),
