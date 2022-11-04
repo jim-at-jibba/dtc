@@ -21,7 +21,8 @@ var encodeCmd = &cobra.Command{
 	Short: "Encode base64 string",
 	Long:  "Encode base64 string",
 	Run: func(cmd *cobra.Command, args []string) {
-		p := tea.NewProgram(initialEncodeModel())
+		url, _ := cmd.Flags().GetBool("url")
+		p := tea.NewProgram(initialEncodeModel(url))
 
 		if err := p.Start(); err != nil {
 			fmt.Println("WHat", err)
@@ -39,6 +40,7 @@ func init() {
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
 	// encodeBase64Cmd.PersistentFlags().String("foo", "", "A help for foo")
+	encodeCmd.Flags().BoolP("url", "u", false, "URL-compatible base64 format")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
@@ -53,23 +55,29 @@ type encodeModel struct {
 	rawString textinput.Model
 	encoded   string
 	err       error
+	url       bool
 }
 
 type encodeStr struct {
 	encoded string
 }
 
-func Encode(raw string) encodeStr {
-	sEnc := b64.StdEncoding.EncodeToString([]byte(raw))
-	return encodeStr{encoded: sEnc}
+func Encode(raw string, url bool) encodeStr {
+	if url {
+		sEnc := b64.URLEncoding.EncodeToString([]byte(raw))
+		return encodeStr{encoded: sEnc}
+	} else {
+		sEnc := b64.StdEncoding.EncodeToString([]byte(raw))
+		return encodeStr{encoded: sEnc}
+	}
 }
 
 func (m encodeModel) encodeMsg() tea.Msg {
-	encoded := Encode(m.rawString.Value())
+	encoded := Encode(m.rawString.Value(), m.url)
 	return encoded
 }
 
-func initialEncodeModel() encodeModel {
+func initialEncodeModel(url bool) encodeModel {
 	ti := textinput.New()
 	ti.Placeholder = "String to encode"
 	ti.Focus()
@@ -78,6 +86,7 @@ func initialEncodeModel() encodeModel {
 		rawString: ti,
 		encoded:   "",
 		err:       nil,
+		url:       url,
 	}
 }
 
@@ -123,8 +132,14 @@ func (m encodeModel) View() string {
 			),
 		)
 	} else {
+		var text string
+		if m.url {
+			text = "Enter the string you want to URL-compatible encode"
+		} else {
+			text = "Enter the string you want to encode."
+		}
 		return lipgloss.JoinVertical(lipgloss.Left,
-			tui.LabelStyle.Render("Enter the string you want to encode."),
+			tui.LabelStyle.Render(text),
 			m.rawString.View(),
 			tui.ValueStyle.Render("(q to quit)"),
 		)
