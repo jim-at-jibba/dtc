@@ -58,20 +58,30 @@ type decodeStr struct {
 	decoded string
 }
 
-func Decode(raw string, url bool) decodeStr {
+func Decode(raw string, url bool) (decodeStr, error) {
 
 	if url {
-		sDec, _ := b64.URLEncoding.DecodeString(strings.TrimSpace(raw))
-		return decodeStr{decoded: string(sDec)}
+		sDec, err := b64.URLEncoding.DecodeString(strings.TrimSpace(raw))
+		if err != nil {
+			fmt.Println("sDec", string(sDec), err)
+			return decodeStr{}, err
+		}
+		return decodeStr{decoded: string(sDec)}, nil
 	} else {
-		sDec, _ := b64.StdEncoding.DecodeString(strings.TrimSpace(raw))
-		fmt.Println("sDec", string(sDec))
-		return decodeStr{decoded: string(sDec)}
+		sDec, err := b64.StdEncoding.DecodeString(strings.TrimSpace(raw))
+		if err != nil {
+			fmt.Println("sDec", string(sDec), err)
+			return decodeStr{}, err
+		}
+		return decodeStr{decoded: string(sDec)}, nil
 	}
 }
 
 func (m decodeModel) decodeMsg() tea.Msg {
-	decoded := Decode(m.rawString.Value(), m.url)
+	decoded, err := Decode(m.rawString.Value(), m.url)
+	if err != nil {
+		return errMsg{err: err}
+	}
 	return decoded
 }
 
@@ -111,8 +121,8 @@ func (m decodeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	// We handle errors just like any other message
 	case errMsg:
-		m.err = msg
-		return m, nil
+		m.err = msg.err
+		return m, tea.Quit
 
 	}
 
@@ -127,6 +137,14 @@ func (m decodeModel) View() string {
 				tui.LabelStyle.Render("Decoded string:"),
 				tui.Spacer.Render(""),
 				tui.ValueStyle.Render(m.decoded),
+			),
+		)
+	} else if m.err != nil {
+		return tui.ErrorContainerStyle.Render(
+			lipgloss.JoinVertical(lipgloss.Left,
+				tui.LabelStyle.Render("Decoding error:"),
+				tui.Spacer.Render(""),
+				tui.ValueStyle.Render(m.err.Error()),
 			),
 		)
 	} else {

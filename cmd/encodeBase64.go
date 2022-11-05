@@ -47,9 +47,13 @@ func init() {
 	// encodeBase64Cmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-type (
-	errMsg error
-)
+type errMsg struct {
+	err error
+}
+
+// For messages that contain errors it's often handy to also implement the
+// error interface on the message.
+func (e errMsg) Error() string { return e.err.Error() }
 
 type encodeModel struct {
 	rawString textinput.Model

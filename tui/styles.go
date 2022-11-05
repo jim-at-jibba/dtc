@@ -11,6 +11,12 @@ var ContainerStyle = lipgloss.NewStyle().
 	Border(lipgloss.NormalBorder(), true).
 	BorderForeground(lipgloss.Color("4"))
 
+var ErrorContainerStyle = lipgloss.NewStyle().
+	Padding(1, 2, 1, 2).
+	Margin(2).
+	Border(lipgloss.NormalBorder(), true).
+	BorderForeground(lipgloss.Color("1"))
+
 var ValueStyle = lipgloss.NewStyle().
 	Bold(true).
 	Foreground(lipgloss.Color("4")).
