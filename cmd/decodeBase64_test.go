@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -17,9 +16,8 @@ func TestDecode(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		d := Decode(tt.input, tt.urlCompat)
+		d, _ := Decode(tt.input, tt.urlCompat)
 
-		fmt.Println("WHAT", d.decoded)
 		if d.decoded != tt.output {
 			t.Fatalf("deocded string incorrect. got=%s",
 				d.decoded)
