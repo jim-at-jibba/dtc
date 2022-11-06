@@ -57,6 +57,14 @@ func init() {
 	// yeetrCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
+type errFileShareMsg struct {
+	err error
+}
+
+// For messages that contain errors it's often handy to also implement the
+// error interface on the message.
+func (e errFileShareMsg) Error() string { return e.err.Error() }
+
 type yeetResponse struct {
 	Link string
 }
@@ -87,13 +95,17 @@ func GetFileShareUrl(fileName string, expires string) (string, error) {
 	}
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	rsp, err := client.Do(req)
-	check(err)
+	if err != nil {
+		return "", err
+	}
 	defer rsp.Body.Close()
 	decoder := json.NewDecoder(rsp.Body)
 	var y yeetResponse
 	err = decoder.Decode(&y)
 	fmt.Println(y)
-	check(err)
+	if err != nil {
+		return "", err
+	}
 	if rsp.StatusCode != http.StatusOK {
 		log.Printf("Request failed with response code: %d", rsp.StatusCode)
 	}
@@ -101,8 +113,11 @@ func GetFileShareUrl(fileName string, expires string) (string, error) {
 }
 
 func (m model) fileShareMsg() tea.Msg {
-	fmt.Println("Getting link...", m.choice)
-	link, _ := GetFileShareUrl(m.choice, m.expires)
+	link, err := GetFileShareUrl(m.choice, m.expires)
+	fmt.Println("WHAT", err)
+	if err != nil {
+		return errFileShareMsg{err: err}
+	}
 	return uploadUrl{link: link}
 }
 
@@ -121,6 +136,7 @@ type model struct {
 	yeeting bool
 	link    string
 	expires string
+	err     error
 }
 
 func initialModel(expires string) model {
@@ -178,6 +194,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.link = msg.link
 		m.yeeting = false
 		return m, tea.Quit
+
+	case errFileShareMsg:
+		fmt.Println("In err mess")
+		m.err = msg.err
+		m.yeeting = false
+		return m, tea.Quit
 	}
 
 	var cmd tea.Cmd
@@ -187,7 +209,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	if !m.yeeting && m.link == "" {
+	if !m.yeeting && m.link == "" && m.err == nil {
 		return tui.ContainerNoBorderStyle.Render(m.list.View())
 	} else if m.yeeting {
 		return tui.ContainerNoBorderStyle.
@@ -205,13 +227,16 @@ func (m model) View() string {
 				tui.ValueStyle.Render(m.link),
 			),
 		)
+	} else if m.err != nil {
+		return tui.ErrorContainerStyle.Render(
+			lipgloss.JoinVertical(lipgloss.Left,
+				tui.LabelStyle.Render("File sharing error:"),
+				tui.Spacer.Render(""),
+				tui.ValueStyle.Render(m.err.Error()),
+			),
+		)
+
 	} else {
 		return "Readt"
-	}
-}
-
-func check(err error) {
-	if err != nil {
-		panic(err)
 	}
 }
