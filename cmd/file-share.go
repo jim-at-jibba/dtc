@@ -176,7 +176,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case uploadUrl:
 		m.link = msg.link
 		m.yeeting = false
-		return m, nil
+		return m, tea.Quit
 	}
 
 	var cmd tea.Cmd
