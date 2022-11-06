@@ -30,8 +30,9 @@ var fileShareCmd = &cobra.Command{
 	Short: "For sharing files.",
 	Long:  "Sharing is, by design, ephemeral, so, the link that file-share provides will expire, after a given time or when the file is downloaded. The idea for this tool was lifted from https://www.npmjs.com/package/yeetr",
 	Run: func(cmd *cobra.Command, args []string) {
+		expires, _ := cmd.Flags().GetString("expires")
 
-		p := tea.NewProgram(initialModel())
+		p := tea.NewProgram(initialModel(expires))
 
 		if err := p.Start(); err != nil {
 			fmt.Println("Error running program:", err)
@@ -49,6 +50,7 @@ func init() {
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
 	// yeetrCmd.PersistentFlags().String("foo", "", "A help for foo")
+	fileShareCmd.Flags().String("expires", "14d", "Expire time for the link. In the format d, w, m. e.g. 2w = 2 weeks")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
@@ -59,7 +61,7 @@ type yeetResponse struct {
 	Link string
 }
 
-func Yeet(fileName string) (string, error) {
+func GetFileShareUrl(fileName string, expires string) (string, error) {
 	client := &http.Client{
 		Timeout: time.Second * 10,
 	}
@@ -78,7 +80,8 @@ func Yeet(fileName string) (string, error) {
 		return "", err
 	}
 	writer.Close()
-	req, err := http.NewRequest("POST", "https://file.io/?expires=2m", bytes.NewReader(body.Bytes()))
+	url := fmt.Sprintf("https://file.io/?expires=%s", expires)
+	req, err := http.NewRequest("POST", url, bytes.NewReader(body.Bytes()))
 	if err != nil {
 		return "", err
 	}
@@ -86,11 +89,10 @@ func Yeet(fileName string) (string, error) {
 	rsp, err := client.Do(req)
 	check(err)
 	defer rsp.Body.Close()
-	// b, err := io.ReadAll(rsp.Body)
-	// check(err)
 	decoder := json.NewDecoder(rsp.Body)
 	var y yeetResponse
 	err = decoder.Decode(&y)
+	fmt.Println(y)
 	check(err)
 	if rsp.StatusCode != http.StatusOK {
 		log.Printf("Request failed with response code: %d", rsp.StatusCode)
@@ -98,9 +100,9 @@ func Yeet(fileName string) (string, error) {
 	return y.Link, nil
 }
 
-func (m model) yeetMsg() tea.Msg {
-	fmt.Println("Yeeting...", m.choice)
-	link, _ := Yeet(m.choice)
+func (m model) fileShareMsg() tea.Msg {
+	fmt.Println("Getting link...", m.choice)
+	link, _ := GetFileShareUrl(m.choice, m.expires)
 	return uploadUrl{link: link}
 }
 
@@ -118,9 +120,10 @@ type model struct {
 	choice  string
 	yeeting bool
 	link    string
+	expires string
 }
 
-func initialModel() model {
+func initialModel(expires string) model {
 	// Set up spinner
 	s := spinner.New()
 	s.Spinner = spinner.Dot
@@ -141,7 +144,7 @@ func initialModel() model {
 
 	list := list.New(items, list.NewDefaultDelegate(), 0, 0)
 	list.Title = "What file do you want to share?"
-	return model{spinner: s, list: list}
+	return model{spinner: s, list: list, expires: expires}
 }
 
 func (m model) Init() tea.Cmd {
@@ -165,7 +168,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.choice = string(i.name)
 				m.yeeting = true
 			}
-			return m, m.yeetMsg
+			return m, m.fileShareMsg
 		}
 	case tea.WindowSizeMsg:
 		h, v := tui.ContainerNoBorderStyle.GetFrameSize()
