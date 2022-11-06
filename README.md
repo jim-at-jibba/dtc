@@ -52,7 +52,7 @@ dev-tools-cli base64 encode -u
 
 ### File Share
 
-> Ephemeral file sharing, the link provides will expire, after a given time or when the file is downloaded.
+> Ephemeral file sharing, the link provided will expire, after a given time or when the file is downloaded. Makes use of [https://file.io](file.io)
 
 Note that there's a limit of 100mb on files
 
