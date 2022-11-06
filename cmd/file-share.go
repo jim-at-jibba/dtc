@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/list"
+	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jim-at-jibba/devtools/tui"
@@ -29,22 +30,8 @@ var fileShareCmd = &cobra.Command{
 	Short: "For sharing files.",
 	Long:  "Sharing is, by design, ephemeral, so, the link that file-share provides will expire, after a given time or when the file is downloaded. The idea for this tool was lifted from https://www.npmjs.com/package/yeetr",
 	Run: func(cmd *cobra.Command, args []string) {
-		items := []list.Item{}
-		files, err := ioutil.ReadDir(".")
-		if err != nil {
-			log.Fatal(err)
-		}
 
-		for _, f := range files {
-			if !f.IsDir() {
-				items = append(items, item{name: f.Name(), size: strconv.FormatInt(f.Size()/1000, 10) + "KB"})
-			}
-		}
-
-		m := model{list: list.New(items, list.NewDefaultDelegate(), 0, 0)}
-		m.list.Title = "What file do you want to share?"
-
-		p := tea.NewProgram(m, tea.WithAltScreen())
+		p := tea.NewProgram(initialModel())
 
 		if err := p.Start(); err != nil {
 			fmt.Println("Error running program:", err)
@@ -129,17 +116,42 @@ func (i item) FilterValue() string { return i.name }
 
 type model struct {
 	list    list.Model
+	spinner spinner.Model
 	choice  string
 	yeeting bool
 	link    string
 }
 
-type uploadUrl struct {
-	link string
+func initialModel() model {
+	// Set up spinner
+	s := spinner.New()
+	s.Spinner = spinner.Dot
+	s.Style = tui.Spinner
+
+	// Set up initial list of files
+	items := []list.Item{}
+	files, err := ioutil.ReadDir(".")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, f := range files {
+		if !f.IsDir() {
+			items = append(items, item{name: f.Name(), size: strconv.FormatInt(f.Size()/1000, 10) + "KB"})
+		}
+	}
+
+	list := list.New(items, list.NewDefaultDelegate(), 0, 0)
+	list.Title = "What file do you want to share?"
+	return model{spinner: s, list: list}
 }
 
 func (m model) Init() tea.Cmd {
-	return nil
+	return m.spinner.Tick
+}
+
+type uploadUrl struct {
+	link string
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -168,7 +180,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	var cmd tea.Cmd
-	m.list, cmd = m.list.Update(msg)
+	m.list, _ = m.list.Update(msg)
+	m.spinner, cmd = m.spinner.Update(msg)
 	return m, cmd
 }
 
@@ -176,7 +189,7 @@ func (m model) View() string {
 	if !m.yeeting && m.link == "" {
 		return docStyle.Render(m.list.View())
 	} else if m.yeeting {
-		return "yeeting..."
+		return fmt.Sprintf("\n\n   %s Loading forever...press q to quit\n\n", m.spinner.View())
 	} else if len(m.link) > 0 {
 		return tui.ContainerStyle.Render(
 			lipgloss.JoinVertical(lipgloss.Left,
