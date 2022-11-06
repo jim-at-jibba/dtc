@@ -19,6 +19,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/jim-at-jibba/devtools/tui"
 	"github.com/spf13/cobra"
 )
 
@@ -104,7 +105,6 @@ func Yeet(fileName string) (string, error) {
 	var y yeetResponse
 	err = decoder.Decode(&y)
 	check(err)
-	fmt.Println(y.Link)
 	if rsp.StatusCode != http.StatusOK {
 		log.Printf("Request failed with response code: %d", rsp.StatusCode)
 	}
@@ -164,7 +164,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case uploadUrl:
 		m.link = msg.link
 		m.yeeting = false
-		return m, nil // tea.Quit removes the string
+		return m, nil
 	}
 
 	var cmd tea.Cmd
@@ -173,12 +173,20 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	if m.link == "" {
+	if !m.yeeting && m.link == "" {
 		return docStyle.Render(m.list.View())
 	} else if m.yeeting {
 		return "yeeting..."
+	} else if len(m.link) > 0 {
+		return tui.ContainerStyle.Render(
+			lipgloss.JoinVertical(lipgloss.Left,
+				tui.LabelStyle.Render("Ephemeral file link:"),
+				tui.Spacer.Render(""),
+				tui.ValueStyle.Render(m.link),
+			),
+		)
 	} else {
-		return m.link
+		return "Readt"
 	}
 }
 
