@@ -108,8 +108,6 @@ type item struct {
 	name, size string
 }
 
-var docStyle = lipgloss.NewStyle().Margin(1, 2)
-
 func (i item) Title() string       { return i.name }
 func (i item) Description() string { return i.size }
 func (i item) FilterValue() string { return i.name }
@@ -170,7 +168,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, m.yeetMsg
 		}
 	case tea.WindowSizeMsg:
-		h, v := docStyle.GetFrameSize()
+		h, v := tui.ContainerNoBorderStyle.GetFrameSize()
 		m.list.SetSize(msg.Width-h, msg.Height-v)
 
 	case uploadUrl:
@@ -187,9 +185,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	if !m.yeeting && m.link == "" {
-		return docStyle.Render(m.list.View())
+		return tui.ContainerNoBorderStyle.Render(m.list.View())
 	} else if m.yeeting {
-		return fmt.Sprintf("\n\n   %s Loading forever...press q to quit\n\n", m.spinner.View())
+		return tui.ContainerNoBorderStyle.
+			Render(
+				lipgloss.JoinHorizontal(lipgloss.Left,
+					m.spinner.View(),
+					tui.LabelStyle.Render("Generating link...press q to quit"),
+				),
+			)
 	} else if len(m.link) > 0 {
 		return tui.ContainerStyle.Render(
 			lipgloss.JoinVertical(lipgloss.Left,

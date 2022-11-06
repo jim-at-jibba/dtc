@@ -30,3 +30,5 @@ var LabelStyle = lipgloss.NewStyle().
 var Spacer = lipgloss.NewStyle().Height(1)
 
 var Spinner = lipgloss.NewStyle().Foreground(lipgloss.Color("6"))
+
+var ContainerNoBorderStyle = lipgloss.NewStyle().Margin(1, 2)
