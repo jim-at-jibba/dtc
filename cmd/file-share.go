@@ -23,10 +23,10 @@ import (
 )
 
 // yeetrCmd represents the yeetr command
-var yeetCmd = &cobra.Command{
-	Use:   "yeet",
+var fileShareCmd = &cobra.Command{
+	Use:   "file-share",
 	Short: "For sharing files.",
-	Long:  "Sharing is, by design, ephemeral, so, the link that yeetr provides will expire, after a given time or when the file is downloaded. The idea for this tool was lifted from https://www.npmjs.com/package/yeetr",
+	Long:  "Sharing is, by design, ephemeral, so, the link that file-share provides will expire, after a given time or when the file is downloaded. The idea for this tool was lifted from https://www.npmjs.com/package/yeetr",
 	Run: func(cmd *cobra.Command, args []string) {
 		items := []list.Item{}
 		files, err := ioutil.ReadDir(".")
@@ -41,7 +41,7 @@ var yeetCmd = &cobra.Command{
 		}
 
 		m := model{list: list.New(items, list.NewDefaultDelegate(), 0, 0)}
-		m.list.Title = "What files do you want to yeet?"
+		m.list.Title = "What file do you want to share?"
 
 		p := tea.NewProgram(m, tea.WithAltScreen())
 
@@ -54,7 +54,7 @@ var yeetCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(yeetCmd)
+	rootCmd.AddCommand(fileShareCmd)
 
 	// Here you will define your flags and configuration settings.
 
