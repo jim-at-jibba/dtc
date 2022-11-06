@@ -11,7 +11,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/jim-at-jibba/devtools/tui"
+	"github.com/jim-at-jibba/dev-tools-cli/tui"
 	"github.com/spf13/cobra"
 )
 
