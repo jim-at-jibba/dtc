@@ -8,10 +8,70 @@
 
 > A collection of tools that you would normally reach for a browser for.
 
+Written in Go and leaning heavily on Cobra and the suite of tools from [Charm](https://charm.sh/):
+
+- [Bubbletea](https://github.com/charmbracelet/bubbletea)
+- [Lipgloss](https://github.com/charmbracelet/bubbletea)
+- [Bubbles](https://github.com/charmbracelet/bubbles)
+
+<h1>👷 This project is WIP and will have more added to it in the future.</h1>
+
 ## Install
 
 ```sh
-go get github.com/jim-at-jibba/dev-tools-cli
+go install github.com/jim-at-jibba/dev-tools-cli@latest
+```
+
+## Commands
+
+### UUID
+
+> Generate UUID v4
+
+```bash
+dev-tools-cli uuid generate
+```
+
+### Base64
+
+> Encode and Decode base64 strings in both standard and URL compatible formats
+
+#### Encode
+
+**Standard**
+
+```bash
+dev-tools-cli base64 encode
+```
+
+**URL Compatible**
+
+```bash
+dev-tools-cli base64 encode -u
+```
+
+### File Share
+
+> Ephemeral file sharing, the link provides will expire, after a given time or when the file is downloaded.
+
+Note that there's a limit of 100mb on files
+
+**defaults to 14 days expiry**
+
+```bash
+dev-tools-cli file-share
+```
+
+**Pass in an expiry time frame**
+
+```bash
+dev-tools-cli file-share
+
+# current dir, expires in 3 days
+dev-tools-cli file-share --expiry=3d
+
+# expires in 4 weeks
+dev-tools-cli file-share --expiry=4w
 ```
 
 ## Author
@@ -25,7 +85,3 @@ go get github.com/jim-at-jibba/dev-tools-cli
 ## Show your support
 
 Give a ⭐️ if this project helped you!
-
----
-
-_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
