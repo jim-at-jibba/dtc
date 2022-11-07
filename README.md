@@ -30,17 +30,25 @@ go install github.com/jim-at-jibba/dev-tools-cli@latest
 
 The output of this command is automatically copied to the clipboard 📋
 
+<details>
+  <summary>Example</summary>
+
 ```bash
 dev-tools-cli uuid generate
 ```
+
+</details>
 
 ### Base64
 
 The output of this command is automatically copied to the clipboard 📋
 
+#### Encode
+
 > Encode and Decode base64 strings in both standard and URL compatible formats
 
-#### Encode
+<details>
+  <summary>Example</summary>
 
 **Standard**
 
@@ -54,6 +62,29 @@ dev-tools-cli base64 encode
 dev-tools-cli base64 encode -u
 ```
 
+</details>
+
+#### Decode
+
+> Encode and Decode base64 strings in both standard and URL compatible formats
+
+<details>
+  <summary>Example</summary>
+
+**Standard**
+
+```bash
+dev-tools-cli base64 decode
+```
+
+**URL Compatible**
+
+```bash
+dev-tools-cli base64 decode -u
+```
+
+</details>
+
 ### File Share
 
 The output of this command is automatically copied to the clipboard 📋
@@ -62,7 +93,10 @@ The output of this command is automatically copied to the clipboard 📋
 
 Note that there's a limit of 100mb on files
 
-**defaults to 14 days expiry**
+<details>
+  <summary>Example</summary>
+
+**Defaults to 14 days expiry**
 
 ```bash
 dev-tools-cli file-share
@@ -79,6 +113,8 @@ dev-tools-cli file-share --expiry=3d
 # expires in 4 weeks
 dev-tools-cli file-share --expiry=4w
 ```
+
+</details>
 
 ## Author
 
