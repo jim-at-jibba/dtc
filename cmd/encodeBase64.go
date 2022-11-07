@@ -13,6 +13,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jim-at-jibba/dev-tools-cli/tui"
 	"github.com/spf13/cobra"
+	"golang.design/x/clipboard"
 )
 
 // encodeBase64Cmd represents the encodeBase64 command
@@ -69,9 +70,11 @@ type encodeStr struct {
 func Encode(raw string, url bool) encodeStr {
 	if url {
 		sEnc := b64.URLEncoding.EncodeToString([]byte(raw))
+		clipboard.Write(clipboard.FmtText, []byte(sEnc))
 		return encodeStr{encoded: sEnc}
 	} else {
 		sEnc := b64.StdEncoding.EncodeToString([]byte(raw))
+		clipboard.Write(clipboard.FmtText, []byte(sEnc))
 		return encodeStr{encoded: sEnc}
 	}
 }
@@ -133,6 +136,7 @@ func (m encodeModel) View() string {
 				tui.LabelStyle.Render("Encoded string:"),
 				tui.Spacer.Render(""),
 				tui.ValueStyle.Render(m.encoded),
+				tui.LabelStyle.Render("(Copied to clipboard)"),
 			),
 		)
 	} else {

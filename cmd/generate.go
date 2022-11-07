@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jim-at-jibba/dev-tools-cli/tui"
 	"github.com/spf13/cobra"
+	"golang.design/x/clipboard"
 )
 
 // generateCmd represents the generate command
@@ -43,9 +44,11 @@ var generateCmd = &cobra.Command{
 			doc.WriteString(desc + "\n" + ids)
 		} else {
 			id := uuid.New()
+			clipboard.Write(clipboard.FmtText, []byte(id.String()))
 			desc := lipgloss.JoinVertical(lipgloss.Left,
 				tui.LabelStyle.Render("UUID: "),
 				tui.ValueStyle.Render(id.String()),
+				tui.LabelStyle.Render("(Copied to clipboard)"),
 				tui.Spacer.Render(""),
 				tui.LabelStyle.Render("UUID Clock ID: "),
 				tui.ValueStyle.Render(strconv.Itoa(id.ClockSequence())),

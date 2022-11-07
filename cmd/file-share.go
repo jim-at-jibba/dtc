@@ -22,6 +22,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jim-at-jibba/dev-tools-cli/tui"
 	"github.com/spf13/cobra"
+	"golang.design/x/clipboard"
 )
 
 // yeetrCmd represents the yeetr command
@@ -109,6 +110,7 @@ func GetFileShareUrl(fileName string, expires string) (string, error) {
 	if rsp.StatusCode != http.StatusOK {
 		log.Printf("Request failed with response code: %d", rsp.StatusCode)
 	}
+	clipboard.Write(clipboard.FmtText, []byte(y.Link))
 	return y.Link, nil
 }
 
@@ -225,6 +227,7 @@ func (m model) View() string {
 				tui.LabelStyle.Render("Ephemeral file link:"),
 				tui.Spacer.Render(""),
 				tui.ValueStyle.Render(m.link),
+				tui.LabelStyle.Render("(Copied to clipboard)"),
 			),
 		)
 	} else if m.err != nil {

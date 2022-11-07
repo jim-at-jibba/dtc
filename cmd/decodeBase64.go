@@ -14,6 +14,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jim-at-jibba/dev-tools-cli/tui"
 	"github.com/spf13/cobra"
+	"golang.design/x/clipboard"
 )
 
 // encodeBase64Cmd represents the encodeBase64 command
@@ -66,6 +67,7 @@ func Decode(raw string, url bool) (decodeStr, error) {
 			fmt.Println("sDec", string(sDec), err)
 			return decodeStr{}, err
 		}
+		clipboard.Write(clipboard.FmtText, []byte(sDec))
 		return decodeStr{decoded: string(sDec)}, nil
 	} else {
 		sDec, err := b64.StdEncoding.DecodeString(strings.TrimSpace(raw))
@@ -73,6 +75,7 @@ func Decode(raw string, url bool) (decodeStr, error) {
 			fmt.Println("sDec", string(sDec), err)
 			return decodeStr{}, err
 		}
+		clipboard.Write(clipboard.FmtText, []byte(sDec))
 		return decodeStr{decoded: string(sDec)}, nil
 	}
 }
@@ -137,6 +140,7 @@ func (m decodeModel) View() string {
 				tui.LabelStyle.Render("Decoded string:"),
 				tui.Spacer.Render(""),
 				tui.ValueStyle.Render(m.decoded),
+				tui.LabelStyle.Render("(Copied to clipboard)"),
 			),
 		)
 	} else if m.err != nil {

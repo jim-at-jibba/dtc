@@ -28,11 +28,15 @@ go install github.com/jim-at-jibba/dev-tools-cli@latest
 
 > Generate UUID v4
 
+The output of this command is automatically copied to the clipboard 📋
+
 ```bash
 dev-tools-cli uuid generate
 ```
 
 ### Base64
+
+The output of this command is automatically copied to the clipboard 📋
 
 > Encode and Decode base64 strings in both standard and URL compatible formats
 
@@ -51,6 +55,8 @@ dev-tools-cli base64 encode -u
 ```
 
 ### File Share
+
+The output of this command is automatically copied to the clipboard 📋
 
 > Ephemeral file sharing, the link provided will expire, after a given time or when the file is downloaded. Makes use of [https://file.io](file.io)
 
