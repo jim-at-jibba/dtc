@@ -37,6 +37,8 @@ The output of this command is automatically copied to the clipboard 📋
 dev-tools-cli uuid generate
 ```
 
+![UUID Generate](./assets/uuid-generate.gif)
+
 </details>
 
 ### Base64
@@ -62,6 +64,8 @@ dev-tools-cli base64 encode
 dev-tools-cli base64 encode -u
 ```
 
+![BASE64 ENCODE](./assets/base64-encode.gif)
+
 </details>
 
 #### Decode
@@ -82,6 +86,8 @@ dev-tools-cli base64 decode
 ```bash
 dev-tools-cli base64 decode -u
 ```
+
+![BASE64 DECODE](./assets/base64-decode.gif)
 
 </details>
 
@@ -113,6 +119,8 @@ dev-tools-cli file-share --expiry=3d
 # expires in 4 weeks
 dev-tools-cli file-share --expiry=4w
 ```
+
+![FILE SHARE](./assets/file-share.gif)
 
 </details>
 
