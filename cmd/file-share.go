@@ -6,6 +6,7 @@ package cmd
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -23,6 +24,10 @@ import (
 	"github.com/jim-at-jibba/dev-tools-cli/tui"
 	"github.com/spf13/cobra"
 	"golang.design/x/clipboard"
+)
+
+var (
+	ErrFetchingLink = errors.New("http error fetching link")
 )
 
 // yeetrCmd represents the yeetr command
@@ -108,7 +113,8 @@ func GetFileShareUrl(fileName string, expires string) (string, error) {
 		return "", err
 	}
 	if rsp.StatusCode != http.StatusOK {
-		log.Printf("Request failed with response code: %d", rsp.StatusCode)
+		fmt.Printf("Request failed with response code: %d", rsp.StatusCode)
+		return "", ErrFetchingLink
 	}
 	clipboard.Write(clipboard.FmtText, []byte(y.Link))
 	return y.Link, nil
@@ -116,7 +122,6 @@ func GetFileShareUrl(fileName string, expires string) (string, error) {
 
 func (m model) fileShareMsg() tea.Msg {
 	link, err := GetFileShareUrl(m.choice, m.expires)
-	fmt.Println("WHAT", err)
 	if err != nil {
 		return errFileShareMsg{err: err}
 	}
