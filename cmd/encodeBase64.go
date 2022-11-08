@@ -148,7 +148,9 @@ func (m encodeModel) View() string {
 		}
 		return lipgloss.JoinVertical(lipgloss.Left,
 			tui.LabelStyle.Render(text),
-			m.rawString.View(),
+			tui.Spacer.Render(""),
+			lipgloss.NewStyle().PaddingLeft(1).Render(m.rawString.View()),
+			tui.Spacer.Render(""),
 			tui.ValueStyle.Render("(q to quit)"),
 		)
 	}

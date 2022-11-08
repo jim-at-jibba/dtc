@@ -5,15 +5,20 @@ import "github.com/charmbracelet/lipgloss"
 // 4 = blue
 // 6 = magenta
 // 7 = white
+
+var width = 60
+
 var ContainerStyle = lipgloss.NewStyle().
 	Padding(1, 2, 1, 2).
 	Margin(2).
+	Width(width).
 	Border(lipgloss.NormalBorder(), true).
 	BorderForeground(lipgloss.Color("4"))
 
 var ErrorContainerStyle = lipgloss.NewStyle().
 	Padding(1, 2, 1, 2).
 	Margin(2).
+	Width(width).
 	Border(lipgloss.NormalBorder(), true).
 	BorderForeground(lipgloss.Color("1"))
 
