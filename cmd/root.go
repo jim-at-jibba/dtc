@@ -6,6 +6,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/elewis787/boa"
 	"github.com/spf13/cobra"
 )
@@ -23,8 +24,15 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	rootCmd.SetHelpFunc(boa.HelpFunc)
-	rootCmd.SetUsageFunc(boa.UsageFunc)
+	styles := boa.DefaultStyles()
+	styles.Title.BorderForeground(lipgloss.Color("6")).Foreground(lipgloss.Color("4"))
+	styles.Border.BorderForeground(lipgloss.Color("4"))
+	styles.SelectedItem.Foreground(lipgloss.Color("#3C3C3C")).
+		Background(lipgloss.Color("4"))
+
+	b := boa.New(boa.WithStyles(styles))
+	rootCmd.SetHelpFunc(b.HelpFunc)
+	rootCmd.SetUsageFunc(b.UsageFunc)
 
 	err := rootCmd.Execute()
 	if err != nil {
