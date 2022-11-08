@@ -56,7 +56,7 @@ func init() {
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
 	// yeetrCmd.PersistentFlags().String("foo", "", "A help for foo")
-	fileShareCmd.Flags().String("expires", "14d", "Expire time for the link. In the format d, w, m. e.g. 2w = 2 weeks")
+	fileShareCmd.Flags().StringP("expires", "e", "14d", "Expire time for the link. In the format d, w, m. e.g. 2w = 2 weeks")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
