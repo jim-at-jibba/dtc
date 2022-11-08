@@ -6,39 +6,40 @@ import "github.com/charmbracelet/lipgloss"
 // 6 = magenta
 // 7 = white
 
-var width = 60
+var (
+	width          = 60
+	ContainerStyle = lipgloss.NewStyle().
+			Padding(1, 2, 1, 2).
+			Margin(2).
+			Width(width).
+			Border(lipgloss.NormalBorder(), true).
+			BorderForeground(lipgloss.Color("4"))
 
-var ContainerStyle = lipgloss.NewStyle().
-	Padding(1, 2, 1, 2).
-	Margin(2).
-	Width(width).
-	Border(lipgloss.NormalBorder(), true).
-	BorderForeground(lipgloss.Color("4"))
+	ErrorContainerStyle = lipgloss.NewStyle().
+				Padding(1, 2, 1, 2).
+				Margin(2).
+				Width(width).
+				Border(lipgloss.NormalBorder(), true).
+				BorderForeground(lipgloss.Color("1"))
 
-var ErrorContainerStyle = lipgloss.NewStyle().
-	Padding(1, 2, 1, 2).
-	Margin(2).
-	Width(width).
-	Border(lipgloss.NormalBorder(), true).
-	BorderForeground(lipgloss.Color("1"))
+	ValueStyle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color("4")).
+			PaddingLeft(1)
 
-var ValueStyle = lipgloss.NewStyle().
-	Bold(true).
-	Foreground(lipgloss.Color("4")).
-	PaddingLeft(1)
+	LabelStyle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color("7")).
+			PaddingLeft(1)
 
-var LabelStyle = lipgloss.NewStyle().
-	Bold(true).
-	Foreground(lipgloss.Color("7")).
-	PaddingLeft(1)
+	Spacer = lipgloss.NewStyle().Height(1)
 
-var Spacer = lipgloss.NewStyle().Height(1)
+	Spinner = lipgloss.NewStyle().Foreground(lipgloss.Color("6"))
 
-var Spinner = lipgloss.NewStyle().Foreground(lipgloss.Color("6"))
+	ContainerNoBorderStyle = lipgloss.NewStyle().Margin(1, 2)
 
-var ContainerNoBorderStyle = lipgloss.NewStyle().Margin(1, 2)
-
-var ListTitle = lipgloss.NewStyle().
-	Bold(true).
-	Foreground(lipgloss.Color("4")).
-	PaddingLeft(1)
+	ListTitle = lipgloss.NewStyle().
+			Bold(true).
+			Foreground(lipgloss.Color("4")).
+			PaddingLeft(1)
+)
