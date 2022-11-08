@@ -13,7 +13,7 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "devtools",
+	Use:   "dev-tools-cli",
 	Short: "A collection of tools a developer would need on a daily basis.",
 	Long:  "A collection of tools a developer would need on a daily basis.",
 	// Uncomment the following line if your bare application

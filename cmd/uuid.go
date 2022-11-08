@@ -4,8 +4,6 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +13,7 @@ var uuidCmd = &cobra.Command{
 	Short: "Generate UUID",
 	Long:  "Generate UUID",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("uuid called")
+		cmd.Help()
 	},
 }
 

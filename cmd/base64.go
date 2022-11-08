@@ -4,8 +4,6 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +13,7 @@ var base64Cmd = &cobra.Command{
 	Short: "Encode/Decode Base64 strings",
 	Long:  "Encode/Decode Base64 strings",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("base64 called")
+		cmd.Help()
 	},
 }
 
