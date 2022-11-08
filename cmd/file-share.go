@@ -167,6 +167,8 @@ func initialModel(expires string) model {
 
 	list := list.New(items, list.NewDefaultDelegate(), 0, 0)
 	list.Title = "What file do you want to share?"
+	list.Styles.Title = tui.ListTitle
+	list.Styles.ActivePaginationDot = lipgloss.NewStyle().Foreground(lipgloss.Color("7"))
 	return model{spinner: s, list: list, expires: expires}
 }
 

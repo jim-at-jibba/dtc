@@ -37,3 +37,8 @@ var Spacer = lipgloss.NewStyle().Height(1)
 var Spinner = lipgloss.NewStyle().Foreground(lipgloss.Color("6"))
 
 var ContainerNoBorderStyle = lipgloss.NewStyle().Margin(1, 2)
+
+var ListTitle = lipgloss.NewStyle().
+	Bold(true).
+	Foreground(lipgloss.Color("4")).
+	PaddingLeft(1)
