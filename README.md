@@ -37,6 +37,12 @@ The output of this command is automatically copied to the clipboard 📋
 dev-tools-cli uuid generate
 ```
 
+**Takes count flag to generate mulitple UUIDs at a time**
+
+```bash
+dev-tools-cli uuid generate --count=100
+```
+
 ![UUID Generate](./assets/uuid-generate.gif)
 
 </details>
