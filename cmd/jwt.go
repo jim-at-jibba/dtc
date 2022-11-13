@@ -4,10 +4,13 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
 	"github.com/charmbracelet/bubbles/textinput"
+	jwt "github.com/dgrijalva/jwt-go"
+	"golang.design/x/clipboard"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -21,6 +24,14 @@ var jwtCmd = &cobra.Command{
 	Short: "Decode and inspect JWTs",
 	Long:  "Decode and inspect JWTs",
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(os.Getenv("DEBUG")) > 0 {
+			f, err := tea.LogToFile("debug.log", "debug")
+			if err != nil {
+				fmt.Println("fatal:", err)
+				os.Exit(1)
+			}
+			defer f.Close()
+		}
 		p := tea.NewProgram(initialJWTModel())
 
 		if err := p.Start(); err != nil {
@@ -53,9 +64,58 @@ type errMsgJWT struct {
 func (e errMsgJWT) Error() string { return e.err.Error() }
 
 type jwtModel struct {
-	rawString textinput.Model
-	decoded   string
-	err       error
+	rawString     textinput.Model
+	decodedHeader string
+	decodedClaims string
+	decoded       string
+	err           error
+}
+
+type decodeJWTStr struct {
+	decoded       string
+	decodedHeader string
+	decodedClaims string
+}
+
+func DecodeJWT(raw string) (decodeJWTStr, error) {
+	token, _, err := new(jwt.Parser).ParseUnverified(raw, jwt.MapClaims{})
+	if err != nil {
+		fmt.Println(err)
+		return decodeJWTStr{}, errMsgJWT{err: err}
+	}
+
+	fmt.Println(token)
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		fmt.Println(err)
+		return decodeJWTStr{}, errMsgJWT{err: err}
+	}
+
+	jsonClaim, err := json.Marshal(claims)
+	if err != nil {
+		fmt.Println(err)
+		return decodeJWTStr{}, errMsgJWT{err: err}
+	}
+
+	header := token.Header
+
+	fmt.Sprint(header)
+	var str = "{\n"
+	for x, y := range header {
+		str += fmt.Sprintf("  %v, %v\n", x, y)
+	}
+	str += "}"
+
+	clipboard.Write(clipboard.FmtText, []byte(jsonClaim))
+	return decodeJWTStr{decodedHeader: str, decodedClaims: string(jsonClaim)}, nil
+}
+
+func (m jwtModel) decodeJWTMsg() tea.Msg {
+	decoded, err := DecodeJWT(m.rawString.Value())
+	if err != nil {
+		return errMsgJWT{err: err}
+	}
+	return decoded
 }
 
 func initialJWTModel() jwtModel {
@@ -64,9 +124,11 @@ func initialJWTModel() jwtModel {
 	ti.Focus()
 
 	return jwtModel{
-		rawString: ti,
-		decoded:   "",
-		err:       nil,
+		rawString:     ti,
+		decodedHeader: "",
+		decodedClaims: "",
+		decoded:       "",
+		err:           nil,
 	}
 }
 
@@ -82,11 +144,19 @@ func (m jwtModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
+		case "enter":
+			return m, m.decodeJWTMsg
 		}
+
+	case decodeJWTStr:
+		decoded := msg
+		m.decodedHeader = decoded.decodedHeader
+		m.decodedClaims = decoded.decodedClaims
+		return m, tea.Quit
 
 	// We handle errors just like any other message
 	case errMsgJWT:
-		m.err = msg
+		m.err = msg.err
 		return m, nil
 
 	}
@@ -96,12 +166,33 @@ func (m jwtModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m jwtModel) View() string {
-	text := "Enter the JWT you want to decode."
-	return lipgloss.JoinVertical(lipgloss.Left,
-		tui.LabelStyle.Render(text),
-		tui.Spacer.Render(""),
-		lipgloss.NewStyle().PaddingLeft(1).Render(m.rawString.View()),
-		tui.Spacer.Render(""),
-		tui.ValueStyle.Render("(q to quit)"),
-	)
+	if len(m.decodedClaims) > 0 {
+		return tui.ContainerStyle.Render(
+			lipgloss.JoinVertical(lipgloss.Left,
+				tui.LabelStyle.Render("Decoded JWT (No singature due to Unverified JWT):"),
+				tui.Spacer.Render(""),
+				lipgloss.NewStyle().Foreground(lipgloss.Color("1")).PaddingLeft(1).Render(m.decodedHeader),
+				tui.Spacer.Render(""),
+				lipgloss.NewStyle().Foreground(lipgloss.Color("2")).PaddingLeft(1).Render(m.decodedClaims),
+				tui.LabelStyle.Render("(Copied to clipboard)"),
+			),
+		)
+	} else if m.err != nil {
+		return tui.ErrorContainerStyle.Render(
+			lipgloss.JoinVertical(lipgloss.Left,
+				tui.LabelStyle.Render("Decoding error:"),
+				tui.Spacer.Render(""),
+				tui.ValueStyle.Render(m.err.Error()),
+			),
+		)
+	} else {
+		text := "Enter the JWT you want to debug."
+		return lipgloss.JoinVertical(lipgloss.Left,
+			tui.LabelStyle.Render(text),
+			tui.Spacer.Render(""),
+			lipgloss.NewStyle().PaddingLeft(1).Render(m.rawString.View()),
+			tui.Spacer.Render(""),
+			tui.ValueStyle.Render("(q to quit)"),
+		)
+	}
 }

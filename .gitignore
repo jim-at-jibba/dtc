@@ -3,3 +3,4 @@ dtc
 devtools
 .DS_Store
 ./**/.DS_Store
+debug.log
