@@ -19,7 +19,7 @@ Written in Go and leaning heavily on Cobra and the suite of tools from [Charm](h
 ## Install
 
 ```sh
-go install github.com/jim-at-jibba/dev-tools-cli@latest
+go install github.com/jim-at-jibba/dtc@latest
 ```
 
 ## Commands
@@ -34,13 +34,13 @@ The output of this command is automatically copied to the clipboard 📋
   <summary>Example</summary>
 
 ```bash
-dev-tools-cli uuid generate
+dtc uuid generate
 ```
 
 **Takes count flag to generate mulitple UUIDs at a time**
 
 ```bash
-dev-tools-cli uuid generate --count=100
+dtc uuid generate --count=100
 ```
 
 ![UUID Generate](./assets/uuid-generate.gif)
@@ -61,13 +61,13 @@ The output of this command is automatically copied to the clipboard 📋
 **Standard**
 
 ```bash
-dev-tools-cli base64 encode
+dtc base64 encode
 ```
 
 **URL Compatible**
 
 ```bash
-dev-tools-cli base64 encode -u
+dtc base64 encode -u
 ```
 
 ![BASE64 ENCODE](./assets/base64-encode.gif)
@@ -84,13 +84,13 @@ dev-tools-cli base64 encode -u
 **Standard**
 
 ```bash
-dev-tools-cli base64 decode
+dtc base64 decode
 ```
 
 **URL Compatible**
 
 ```bash
-dev-tools-cli base64 decode -u
+dtc base64 decode -u
 ```
 
 ![BASE64 DECODE](./assets/base64-decode.gif)
@@ -111,19 +111,19 @@ Note that there's a limit of 100mb on files
 **Defaults to 14 days expiry**
 
 ```bash
-dev-tools-cli file-share
+dtc file-share
 ```
 
 **Pass in an expiry time frame**
 
 ```bash
-dev-tools-cli file-share
+dtc file-share
 
 # current dir, expires in 3 days
-dev-tools-cli file-share --expiry=3d
+dtc file-share --expiry=3d
 
 # expires in 4 weeks
-dev-tools-cli file-share --expiry=4w
+dtc file-share --expiry=4w
 ```
 
 ![FILE SHARE](./assets/file-share.gif)
