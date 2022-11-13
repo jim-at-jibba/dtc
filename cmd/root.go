@@ -13,9 +13,17 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "dev-tools-cli",
-	Short: "A collection of tools a developer would need on a daily basis.",
-	Long:  "A collection of tools a developer would need on a daily basis.",
+	Use:     "dtc",
+	Short:   "A collection of tools a developer would need on a daily basis.",
+	Version: "0.3.0",
+	Long: `
+	A collection of tools a developer would need on a daily basis. These are
+  tools I would normally reach to a browser for.
+
+	* Run dtc help for checking out inline help
+
+	Made with ❤ by https://github.com/jim-at-jibba
+`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
