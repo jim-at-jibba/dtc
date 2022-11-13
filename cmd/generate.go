@@ -10,7 +10,7 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/google/uuid"
-	"github.com/jim-at-jibba/dev-tools-cli/tui"
+	"github.com/jim-at-jibba/dtc/tui"
 	"github.com/spf13/cobra"
 	"golang.design/x/clipboard"
 )

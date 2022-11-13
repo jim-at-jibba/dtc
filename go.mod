@@ -1,4 +1,4 @@
-module github.com/jim-at-jibba/dev-tools-cli
+module github.com/jim-at-jibba/dtc
 
 go 1.19
 
