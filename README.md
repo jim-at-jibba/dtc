@@ -8,6 +8,8 @@
 
 > A collection of tools that you would normally reach for a browser for.
 
+![BASE64 DECODE](./assets/dtc.jpg)
+
 Written in Go and leaning heavily on Cobra and the suite of tools from [Charm](https://charm.sh/):
 
 - [Bubbletea](https://github.com/charmbracelet/bubbletea)
@@ -43,7 +45,8 @@ dtc uuid generate
 dtc uuid generate --count=100
 ```
 
-![UUID Generate](./assets/uuid-generate.gif)
+![UUID Generate](./assets/uuid.gif)
+![UUID Generate](./assets/uuid-count.gif)
 
 </details>
 
