@@ -15,7 +15,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:     "dtc",
 	Short:   "A collection of tools a developer would need on a daily basis.",
-	Version: "0.3.0",
+	Version: "0.3.1",
 	Long: `
 	A collection of tools a developer would need on a daily basis. These are
   tools I would normally reach to a browser for.
