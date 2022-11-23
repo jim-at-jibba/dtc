@@ -169,7 +169,7 @@ func (m jwtModel) View() string {
 	if len(m.decodedClaims) > 0 {
 		return tui.ContainerStyle.Render(
 			lipgloss.JoinVertical(lipgloss.Left,
-				tui.LabelStyle.Render("Decoded JWT (No singature due to Unverified JWT):"),
+				tui.LabelStyle.Render("Decoded JWT (No signature due to unverified JWT):"),
 				tui.Spacer.Render(""),
 				lipgloss.NewStyle().Foreground(lipgloss.Color("1")).PaddingLeft(1).Render(m.decodedHeader),
 				tui.Spacer.Render(""),
