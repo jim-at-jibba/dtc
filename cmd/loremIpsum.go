@@ -84,7 +84,8 @@ func NewModel() (*loremIpsumModel, error) {
 }
 
 type loremIpsumModel struct {
-	list list.Model
+	list   list.Model
+	loaded bool
 }
 
 var _ tea.Model = (*loremIpsumModel)(nil)
@@ -106,7 +107,10 @@ func (m *loremIpsumModel) initList(width, height int) {
 func (m loremIpsumModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.initList(msg.Width, msg.Height)
+		if !m.loaded {
+			m.initList(msg.Width, msg.Height)
+			m.loaded = true
+		}
 	case tea.KeyMsg:
 		switch msg.Type {
 		case tea.KeyCtrlC, tea.KeyCtrlBackslash:
@@ -120,7 +124,11 @@ func (m loremIpsumModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // View renders output to the CLI.
 func (m loremIpsumModel) View() string {
-	return m.list.View()
+	if m.loaded {
+		return m.list.View()
+	} else {
+		return "loading..."
+	}
 }
 
 // END Main Model
