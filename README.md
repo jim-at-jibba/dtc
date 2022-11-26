@@ -161,8 +161,6 @@ The output of this command is automatically copied to the clipboard 📋
 dtc lorem-ipsum
 ```
 
-![Lorem Ipsum](./assets/lorem-ipsum.gif)
-
 </details>
 ## Author
 
