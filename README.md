@@ -150,6 +150,20 @@ dtc jwt-debugger
 
 </details>
 
+### Lorem Ipsum generator
+
+The output of this command is automatically copied to the clipboard 📋
+
+<details>
+  <summary>Example</summary>
+
+```bash
+dtc lorem-ipsum
+```
+
+![Lorem Ipsum](./assets/lorem-ipsum.gif)
+
+</details>
 ## Author
 
 👤 **James Best**
