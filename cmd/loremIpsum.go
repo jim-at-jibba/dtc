@@ -67,23 +67,32 @@ func init() {
 	rootCmd.AddCommand(loremIpsumCmd)
 }
 
+type errMsgLoremIpsum struct {
+	err error
+}
+
+// For messages that contain errors it's often handy to also implement the
+// error interface on the message.
+func (e errMsgLoremIpsum) Error() string { return e.err.Error() }
+
 // Amount Model
 type amountModel struct {
 	amount        textinput.Model
 	generatedText string
 	textType      string
+	err           error
 }
 
 type GeneratedText struct {
 	text string
 }
 
-func GenerateLoremIpsom(textType, amount string) string {
+func GenerateLoremIpsom(textType, amount string) (GeneratedText, error) {
 	loremIpsumGenerator := loremipsum.New()
 	int, err := strconv.Atoi(amount)
 	words := ""
 	if err != nil {
-		return ""
+		return GeneratedText{}, err
 	}
 	switch textType {
 	case "Word":
@@ -96,12 +105,15 @@ func GenerateLoremIpsom(textType, amount string) string {
 	}
 
 	clipboard.Write(clipboard.FmtText, []byte(words))
-	return utils.TruncateString(words, 250)
+	return GeneratedText{text: utils.TruncateString(words, 250)}, nil
 }
 
 func (m amountModel) generateLoremMsg() tea.Msg {
-	text := GenerateLoremIpsom(m.textType, m.amount.Value())
-	return GeneratedText{text: text}
+	text, err := GenerateLoremIpsom(m.textType, m.amount.Value())
+	if err != nil {
+		return errMsgLoremIpsum{err: err}
+	}
+	return text
 }
 
 func NewAmountModel(textType string) *amountModel {
@@ -135,6 +147,9 @@ func (m amountModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		text := msg
 		m.generatedText = text.text
 		return m, tea.Quit
+	case errMsg:
+		m.err = msg.err
+		return m, tea.Quit
 	}
 
 	m.amount, cmd = m.amount.Update(msg)
@@ -150,6 +165,15 @@ func (m amountModel) View() string {
 			tui.Spacer.Render(""),
 			tui.ValueStyle.Render("(q to quit)"),
 		)
+	} else if m.err != nil {
+		return tui.ErrorContainerStyle.Render(
+			lipgloss.JoinVertical(lipgloss.Left,
+				tui.LabelStyle.Render("Decoding error:"),
+				tui.Spacer.Render(""),
+				tui.ValueStyle.Render(m.err.Error()),
+			),
+		)
+
 	} else {
 		return tui.ContainerStyle.Render(
 			lipgloss.JoinVertical(lipgloss.Left,
