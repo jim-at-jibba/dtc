@@ -13,10 +13,11 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/jim-at-jibba/dtc/internal/utils"
 	"github.com/jim-at-jibba/dtc/tui"
 	"github.com/spf13/cobra"
 	"golang.design/x/clipboard"
-	"gopkg.in/loremipsum.v1"
+	loremipsum "gopkg.in/loremipsum.v1"
 )
 
 type status int
@@ -28,32 +29,6 @@ const (
 	selection status = iota
 	form
 )
-
-func TruncateString(str string, length int) string {
-	if length <= 0 {
-		return ""
-	}
-
-	// This code cannot support Japanese
-	// orgLen := len(str)
-	// if orgLen <= length {
-	//     return str
-	// }
-	// return str[:length]
-
-	// Support Japanese
-	// Ref: Range loops https://blog.golang.org/strings
-	truncated := ""
-	count := 0
-	for _, char := range str {
-		truncated += string(char)
-		count++
-		if count >= length {
-			break
-		}
-	}
-	return truncated
-}
 
 // loremIpsumCmd represents the loremIpsum command
 var loremIpsumCmd = &cobra.Command{
@@ -92,6 +67,13 @@ func init() {
 	rootCmd.AddCommand(loremIpsumCmd)
 }
 
+// Amount Model
+type amountModel struct {
+	amount        textinput.Model
+	generatedText string
+	textType      string
+}
+
 type GeneratedText struct {
 	text string
 }
@@ -114,19 +96,12 @@ func GenerateLoremIpsom(textType, amount string) string {
 	}
 
 	clipboard.Write(clipboard.FmtText, []byte(words))
-	return TruncateString(words, 500)
+	return utils.TruncateString(words, 250)
 }
 
-func (f amountModel) generateLoremMsg() tea.Msg {
-	text := GenerateLoremIpsom(f.textType, f.amount.Value())
+func (m amountModel) generateLoremMsg() tea.Msg {
+	text := GenerateLoremIpsom(m.textType, m.amount.Value())
 	return GeneratedText{text: text}
-}
-
-// Amount Model
-type amountModel struct {
-	amount        textinput.Model
-	generatedText string
-	textType      string
 }
 
 func NewAmountModel(textType string) *amountModel {
@@ -138,37 +113,40 @@ func NewAmountModel(textType string) *amountModel {
 	}
 }
 
-func (f amountModel) Init() tea.Cmd {
+func (m amountModel) Init() tea.Cmd {
 	return textinput.Blink
 }
 
-func (f amountModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m amountModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
-			return f, tea.Quit
+			return m, tea.Quit
+		// case "esc":
+		// 	models[selection] = NewModel()
+		// 	return models[selection].Update(nil)
 		case "enter":
-			return f, f.generateLoremMsg
+			return m, m.generateLoremMsg
 		}
 	case GeneratedText:
 		text := msg
-		f.generatedText = text.text
-		return f, tea.Quit
+		m.generatedText = text.text
+		return m, tea.Quit
 	}
 
-	f.amount, cmd = f.amount.Update(msg)
-	return f, cmd
+	m.amount, cmd = m.amount.Update(msg)
+	return m, cmd
 }
 
-func (f amountModel) View() string {
-	if f.generatedText == "" {
+func (m amountModel) View() string {
+	if m.generatedText == "" {
 		return lipgloss.JoinVertical(lipgloss.Left,
-			tui.LabelStyle.Render(fmt.Sprintf("How many %ss", f.textType)),
+			tui.LabelStyle.Render(fmt.Sprintf("How many %ss", m.textType)),
 			tui.Spacer.Render(""),
-			lipgloss.NewStyle().PaddingLeft(1).Render(f.amount.View()),
+			lipgloss.NewStyle().PaddingLeft(1).Render(m.amount.View()),
 			tui.Spacer.Render(""),
 			tui.ValueStyle.Render("(q to quit)"),
 		)
@@ -177,7 +155,7 @@ func (f amountModel) View() string {
 			lipgloss.JoinVertical(lipgloss.Left,
 				tui.LabelStyle.Render("Generate lorem ipsum (truncated for brevity):"),
 				tui.Spacer.Render(""),
-				tui.ValueStyle.Render(fmt.Sprintf("%s...", f.generatedText)),
+				tui.ValueStyle.Render(fmt.Sprintf("%s...", m.generatedText)),
 				tui.LabelStyle.Render("(Copied to clipboard)"),
 			),
 		)
