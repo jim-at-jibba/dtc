@@ -156,7 +156,7 @@ func (f amountModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case GeneratedText:
 		text := msg
 		f.generatedText = text.text
-		return f, nil
+		return f, tea.Quit
 	}
 
 	f.amount, cmd = f.amount.Update(msg)
