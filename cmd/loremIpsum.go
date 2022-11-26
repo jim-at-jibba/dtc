@@ -212,7 +212,6 @@ func NewModel() *loremIpsumModel {
 
 type loremIpsumModel struct {
 	list    list.Model
-	loaded  bool
 	choosen string
 }
 
@@ -235,10 +234,7 @@ func (m *loremIpsumModel) initList(width, height int) {
 func (m loremIpsumModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		if !m.loaded {
-			m.initList(msg.Width, msg.Height)
-			m.loaded = true
-		}
+		m.initList(msg.Width, msg.Height)
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 		case "ctrl+c":
@@ -260,15 +256,7 @@ func (m loremIpsumModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // View renders output to the CLI.
 func (m loremIpsumModel) View() string {
-	if m.loaded {
-		return m.list.View()
-	} else {
-		return tui.ContainerStyle.Render(
-			lipgloss.JoinVertical(lipgloss.Left,
-				tui.LabelStyle.Render("Loading..."),
-			),
-		)
-	}
+	return m.list.View()
 }
 
 // END Main Model
