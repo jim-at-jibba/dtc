@@ -207,7 +207,16 @@ func (w words) Description() string {
 }
 
 func NewModel() *loremIpsumModel {
-	return &loremIpsumModel{}
+	items := []list.Item{
+		words{title: "Word", description: "Word type"},
+		words{title: "Sentence", description: "I want a sentence"},
+		words{title: "Paragraph", description: "Give me paragraphs"},
+	}
+	list := list.New(items, list.NewDefaultDelegate(), 0, 0)
+	list.Title = "What type of text?"
+	return &loremIpsumModel{
+		list: list,
+	}
 }
 
 type loremIpsumModel struct {
@@ -221,20 +230,9 @@ func (m loremIpsumModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m *loremIpsumModel) initList(width, height int) {
-	m.list = list.New([]list.Item{}, list.NewDefaultDelegate(), width, height)
-	m.list.Title = "What type of text?"
-	m.list.SetItems([]list.Item{
-		words{title: "Word", description: "Word type"},
-		words{title: "Sentence", description: "I want a sentence"},
-		words{title: "Paragraph", description: "Give me paragraphs"},
-	})
-}
-
 func (m loremIpsumModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.initList(msg.Width, msg.Height)
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 		case "ctrl+c":
