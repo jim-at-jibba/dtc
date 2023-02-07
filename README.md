@@ -104,7 +104,7 @@ dtc base64 decode -u
 
 The output of this command is automatically copied to the clipboard 📋
 
-> Ephemeral file sharing, the link provided will expire, after a given time or when the file is downloaded. Makes use of [https://file.io](file.io)
+> Ephemeral file sharing, the link provided will expire, after a given time or when the file is downloaded. Makes use of [https://file.io](https://file.io)
 
 Note that there's a limit of 100mb on files
 
