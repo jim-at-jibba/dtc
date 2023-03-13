@@ -11,7 +11,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/spf13/cobra v1.6.1
 	golang.design/x/clipboard v0.6.3
-	gopkg.in/loremipsum.v1 v1.1.0
+	gopkg.in/loremipsum.v1 v1.1.2
 )
 
 require (
